@@ -20,7 +20,7 @@ const ComponentName = 'RNSelectableText';
 
 const RNSelectableTextView =
   UIManager.getViewManagerConfig(ComponentName) != null
-    ? requireNativeComponent(ComponentName)
+    ? requireNativeComponent<any>(ComponentName)
     : () => {
         throw new Error(LINKING_ERROR);
       };
@@ -35,7 +35,7 @@ interface NativeHighlightEvent {
   };
 }
 
-export class SelectableText extends Component {
+export class SelectableText extends Component<SelectableTextProps> {
   static defaultProps = {
     value: '',
     menuItems: [],
@@ -76,13 +76,13 @@ export class SelectableText extends Component {
     }
   };
 
-  _onSelection = (event: NativeSyntheticEvent) => {
+  _onSelection = (event: NativeSyntheticEvent<NativeSelectionEvent>) => {
     if (this.props.onSelection) {
       this.props.onSelection(event.nativeEvent);
     }
   };
 
-  _onHighlightPress = (event: NativeSyntheticEvent) => {
+  _onHighlightPress = (event: NativeSyntheticEvent<NativeHighlightEvent>) => {
     if (this.props.onHighlightPress) {
       this.props.onHighlightPress(event.nativeEvent.id);
     }
@@ -122,12 +122,15 @@ export class SelectableText extends Component {
         onSelection={this._onSelection}
         onHighlightPress={this._onHighlightPress}
       >
-        
-        {appendToChildren && {appendToChildren}}
-      
+        <Component {...textProps} />
+        {appendToChildren && <View>{appendToChildren}</View>}
+      </RNSelectableTextView>
     );
   }
 }
 
+// Export types using 'export type' syntax
 export type { SelectableTextProps, SelectionEvent, Highlight } from './types';
+
+// Export the component as default
 export default SelectableText;
