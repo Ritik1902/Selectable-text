@@ -1,0 +1,288 @@
+## Installation Instructions
+
+### Step 1: Install the package
+
+```bash
+npm install react-native-selectable-text-modern --save
+# or
+yarn add react-native-selectable-text-modern
+```
+
+### Step 2: iOS Setup
+
+```bash
+cd ios && pod install && cd ..
+```
+
+### Step 3: Android Setup
+
+No additional setup required for React Native 0.60+. The package will be auto-linked.
+
+### Step 4: Rebuild the app
+
+```bash
+# iOS
+npx react-native run-ios
+
+# Android
+npx react-native run-android
+```
+
+---
+
+## Usage Examples
+
+### Basic Usage
+
+```typescript
+import { SelectableText } from 'react-native-selectable-text-modern';
+
+function App() {
+  const handleSelection = ({ eventType, content, selectionStart, selectionEnd }) => {
+    console.log('Selected:', content);
+    console.log('Menu item:', eventType);
+    console.log('Range:', selectionStart, '-', selectionEnd);
+  };
+
+  return (
+    <SelectableText
+      menuItems={['Copy', 'Share', 'Search']}
+      onSelection={handleSelection}
+      value="Select this text to see custom menu items!"
+      style={{ fontSize: 16, padding: 20 }}
+    />
+  );
+}
+```
+
+### With Highlights
+
+```typescript
+import { SelectableText } from 'react-native-selectable-text-modern';
+
+function App() {
+  const highlights = [
+    { id: 'highlight1', start: 0, end: 6 },
+    { id: 'highlight2', start: 12, end: 18 },
+  ];
+
+  const handleHighlightPress = (id) => {
+    console.log('Pressed highlight:', id);
+  };
+
+  return (
+    <SelectableText
+      value="Hello World! This is highlighted text."
+      highlights={highlights}
+      highlightColor="#FFEB3B"
+      onHighlightPress={handleHighlightPress}
+      menuItems={['Copy', 'Define']}
+      onSelection={({ eventType, content }) => {
+        console.log(eventType, content);
+      }}
+    />
+  );
+}
+```
+
+### With Custom Text Component
+
+```typescript
+import { SelectableText } from 'react-native-selectable-text-modern';
+import { Text } from 'react-native';
+
+function App() {
+  return (
+    <SelectableText
+      TextComponent={Text}
+      textValueProp="children"
+      textComponentProps={{
+        style: { fontWeight: 'bold', color: 'blue' }
+      }}
+      value="Custom styled text"
+      menuItems={['Action 1', 'Action 2']}
+      onSelection={(event) => console.log(event)}
+    />
+  );
+}
+```
+
+### With Append Element
+
+```typescript
+import { SelectableText } from 'react-native-selectable-text-modern';
+import { TouchableOpacity, Text } from 'react-native';
+
+function App() {
+  return (
+    <SelectableText
+      value="Read this text and click the button below."
+      menuItems={['Copy']}
+      appendToChildren={
+        <TouchableOpacity onPress={() => console.log('Button pressed')}>
+          Read More
+        
+      }
+    />
+  );
+}
+```
+
+### Complete Example with All Features
+
+```typescript
+import React, { useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import { SelectableText } from 'react-native-selectable-text-modern';
+
+function CompleteExample() {
+  const [highlights, setHighlights] = useState([
+    { id: '1', start: 0, end: 5 },
+    { id: '2', start: 15, end: 20 },
+  ]);
+
+  const handleSelection = ({ eventType, content, selectionStart, selectionEnd }) => {
+    if (eventType === 'Highlight') {
+      setHighlights([
+        ...highlights,
+        { id: Date.now().toString(), start: selectionStart, end: selectionEnd }
+      ]);
+    } else if (eventType === 'Search') {
+      Alert.alert('Search', `Searching for: ${content}`);
+    } else if (eventType === 'Copy') {
+      Alert.alert('Copied', content);
+    }
+  };
+
+  const handleHighlightPress = (id) => {
+    Alert.alert('Highlight Pressed', `Highlight ID: ${id}`);
+    // Remove highlight
+    setHighlights(highlights.filter(h => h.id !== id));
+  };
+
+  return (
+    
+      <SelectableText
+        value="Hello World! This is a complete example with all features enabled. Long press to select text and see custom menu items. Tap on highlighted text to remove highlights."
+        menuItems={['Copy', 'Search', 'Highlight', 'Share']}
+        onSelection={handleSelection}
+        highlights={highlights}
+        highlightColor="#FFF59D"
+        onHighlightPress={handleHighlightPress}
+        style={styles.text}
+      />
+    
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  text: {
+    fontSize: 18,
+    lineHeight: 28,
+    color: '#333',
+  },
+});
+
+export default CompleteExample;
+```
+
+---
+
+## API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | `""` | The text content to display |
+| `onSelection` | `function` | `() => {}` | Called when user taps a menu item. Receives `{ eventType, content, selectionStart, selectionEnd }` |
+| `menuItems` | `string[]` | `[]` | Array of custom menu item labels |
+| `style` | `TextStyle` | `null` | Additional styles for the text |
+| `highlights` | `Highlight[]` | `[]` | Array of text ranges to highlight: `[{ id?: string, start: number, end: number }]` |
+| `highlightColor` | `string` | `"#FFFF00"` | Color for highlighted text (hex format) |
+| `onHighlightPress` | `function` | `() => {}` | Called when user taps a highlight. Receives the highlight `id` |
+| `appendToChildren` | `ReactNode` | `null` | Element to append at the end of text |
+| `TextComponent` | `Component` | `Text` | Custom Text component to use for rendering |
+| `textValueProp` | `string` | `"children"` | Prop name to pass text value to TextComponent |
+| `textComponentProps` | `object` | `{}` | Additional props to pass to TextComponent |
+
+### Types
+
+```typescript
+interface Highlight {
+  id?: string;
+  start: number;
+  end: number;
+}
+
+interface SelectionEvent {
+  eventType: string;
+  content: string;
+  selectionStart: number;
+  selectionEnd: number;
+}
+```
+
+---
+
+## Troubleshooting
+
+### iOS Issues
+
+1. **Pod install fails**: Make sure you have CocoaPods installed and run `pod install` in the ios directory
+2. **Module not found**: Clean build folder (Product > Clean Build Folder in Xcode) and rebuild
+
+### Android Issues
+
+1. **Build fails**: Make sure your `android/build.gradle` has the correct Gradle version
+2. **Module not found**: Run `./gradlew clean` in the android directory and rebuild
+
+### Common Issues
+
+1. **Custom menu not showing**: Make sure you've provided `menuItems` prop
+2. **Highlights not working**: Verify that start/end positions are within text length
+3. **Events not firing**: Check that you've passed the correct event handlers
+
+---
+
+## Migration from @alentoma/react-native-selectable-text
+
+This library is a drop-in replacement. Simply:
+
+1. Uninstall the old package:
+   ```bash
+   npm uninstall @alentoma/react-native-selectable-text
+   ```
+
+2. Install this package:
+   ```bash
+   npm install react-native-selectable-text-modern
+   ```
+
+3. Update imports:
+   ```typescript
+   // Old
+   import { SelectableText } from '@alentoma/react-native-selectable-text';
+   
+   // New
+   import { SelectableText } from 'react-native-selectable-text-modern';
+   ```
+
+All props and functionality remain the same!
+
+---
+
+## License
+
+MIT
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
