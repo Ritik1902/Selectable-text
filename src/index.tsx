@@ -129,5 +129,5 @@ export class SelectableText extends Component {
   }
 }
 
-export { SelectableTextProps, SelectionEvent, Highlight }
+export type { SelectableTextProps, SelectionEvent, Highlight } from './types';
 export default SelectableText;
