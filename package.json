@@ -1,6 +1,7 @@
 {
   "name": "react-native-selectable-text-modern",
   "version": "1.0.0",
+  "homepage": "https://github.com/Ritik1902/Selectable-text#readme",
   "description": "React Native component for text selection with custom context menus - RN 0.80.2",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
