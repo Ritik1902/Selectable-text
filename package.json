@@ -9,7 +9,8 @@
   "source": "src/index",
   "scripts": {
     "typescript": "tsc --noEmit",
-    "prepare": "bob build"
+    "build": "bob build",
+    "prepack": "npm run build"
   },
   "keywords": [
     "react-native",
